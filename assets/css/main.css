@@ -74,6 +74,16 @@ a { color: inherit; text-decoration: none; }
   z-index: -2;
   background: linear-gradient(180deg, var(--paper) 0%, #d9d9d6 100%);
 }
+/* dark layer crossfades over the light one — opacity is GPU-composited,
+   no full-screen repaint while scrolling */
+#bg-dark {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(180deg, #111111 0%, #030303 100%);
+  opacity: 0;
+  will-change: opacity;
+}
 
 /* film grain — concrete dust */
 body::after {

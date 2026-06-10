@@ -40,7 +40,7 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const canvas = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.setSize(innerWidth, innerHeight);
 renderer.localClippingEnabled = true;
 
@@ -257,7 +257,17 @@ requestAnimationFrame(tickPreloader);
 
 const chapterEls = [...document.querySelectorAll('.chapter')];
 const outroEl = document.querySelector('.outro');
-const bgEl = document.getElementById('bg');
+const bgDarkEl = document.getElementById('bg-dark');
+
+/* write style values only when they actually change — стиль-рекалк на
+   каждый кадр и был источником лагов скролла на слабых машинах */
+const styleCache = new Map();
+function setCached(key, apply, value, eps = 0.002) {
+  const prev = styleCache.get(key);
+  if (prev !== undefined && Math.abs(prev - value) < eps) return;
+  styleCache.set(key, value);
+  apply(value);
+}
 
 let pTarget = 0;
 let p = 0;
@@ -273,11 +283,8 @@ function chapterFocus(k, prog) {
   return Math.min(smoothstep(a, a + 0.06, prog), 1 - smoothstep(b - 0.06, b, prog));
 }
 
-const colTop = new THREE.Color();
 const colBottom = new THREE.Color();
-const cPaperTop = new THREE.Color(PAPER.top);
 const cPaperBot = new THREE.Color(PAPER.bottom);
-const cDarkTop = new THREE.Color(DARK.top);
 const cDarkBot = new THREE.Color(DARK.bottom);
 
 /* ---------- mouse parallax ---------- */
@@ -301,12 +308,11 @@ function frame(now) {
 
   p += (pTarget - p) * (reduceMotion ? 1 : 0.07);
 
-  /* background: stay light on the cover, sink into black */
+  /* background: stay light on the cover, sink into black.
+     Crossfade of two static gradients — opacity only, no repaint */
   const dark = smoothstep(0.05, 0.30, p);
-  colTop.copy(cPaperTop).lerp(cDarkTop, dark);
+  setCached('bgDark', (v) => { bgDarkEl.style.opacity = v.toFixed(3); }, dark);
   colBottom.copy(cPaperBot).lerp(cDarkBot, dark);
-  bgEl.style.background =
-    `linear-gradient(180deg, #${colTop.getHexString()} 0%, #${colBottom.getHexString()} 100%)`;
   scene.fog.color.copy(colBottom);
   header.classList.toggle('is-inverse', dark > 0.55);
 
@@ -375,21 +381,27 @@ function frame(now) {
   /* DOM chapters */
   chapterEls.forEach((el, k) => {
     const f = focuses[k];
-    el.style.opacity = f.toFixed(3);
-    el.style.visibility = f > 0.005 ? 'visible' : 'hidden';
-    el.style.setProperty('--chOff', (1 - easeInOut(f)) * 26);
+    setCached(`ch${k}`, (v) => {
+      el.style.opacity = v.toFixed(3);
+      el.style.visibility = v > 0.005 ? 'visible' : 'hidden';
+      el.style.setProperty('--chOff', (1 - easeInOut(v)) * 26);
+    }, f);
   });
 
   /* hero out, outro in (held back until the logo lands) */
   const heroIn = sceneStart > 0 ? clamp((now - sceneStart) / 700, 0, 1) : 0;
   const heroF = (1 - smoothstep(0.015, 0.085, p)) * easeInOut(heroIn);
-  hero.style.opacity = heroF.toFixed(3);
-  hero.style.visibility = heroF > 0.005 ? 'visible' : 'hidden';
+  setCached('hero', (v) => {
+    hero.style.opacity = v.toFixed(3);
+    hero.style.visibility = v > 0.005 ? 'visible' : 'hidden';
+  }, heroF);
 
   const outroF = smoothstep(0.92, 0.985, p);
-  outroEl.style.opacity = outroF.toFixed(3);
-  outroEl.style.visibility = outroF > 0.005 ? 'visible' : 'hidden';
-  outroEl.classList.toggle('is-live', outroF > 0.5);
+  setCached('outro', (v) => {
+    outroEl.style.opacity = v.toFixed(3);
+    outroEl.style.visibility = v > 0.005 ? 'visible' : 'hidden';
+    outroEl.classList.toggle('is-live', v > 0.5);
+  }, outroF);
 
   renderer.render(scene, camera);
 }
