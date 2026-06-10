@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HORIN — Deformed in Concrete</title>
+  <meta name="description" content="HORIN. Deformed in Concrete — a collection by fashion designer HORIN. Tailoring cast under pressure.">
+  <meta property="og:title" content="HORIN — Deformed in Concrete">
+  <meta property="og:description" content="A collection by fashion designer HORIN. Tailoring cast under pressure.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="assets/logo/favicon.png">
+  <link rel="preload" href="assets/fonts/Benzin-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/Benzin-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js" } }
+  </script>
+</head>
+<body class="is-locked">
+
+  <div id="bg"></div>
+  <canvas id="scene"></canvas>
+
+  <!-- preloader -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-logo">
+      <div class="pl-layer pl-ghost"></div>
+      <div class="pl-layer pl-fill-wrap"><div class="pl-fill"></div></div>
+    </div>
+    <div class="pl-count">000 %</div>
+  </div>
+
+  <!-- header -->
+  <header class="site-header">
+    <div class="h-project">
+      Deformed<br>in concrete
+      <small>Project</small>
+    </div>
+    <a class="h-logo" href="index.html" aria-label="HORIN home">
+      <img src="assets/logo/logo.webp" alt="HORIN logo">
+    </a>
+    <div class="h-brand">
+      HORIN
+      <a class="h-nav" href="contact.html">Contact</a>
+    </div>
+  </header>
+
+  <!-- hero -->
+  <section class="hero">
+    <h1>Deformed in&nbsp;concrete</h1>
+    <div class="hero-sub">
+      <span>Project by HORIN</span>
+      <span>Collection N°1</span>
+    </div>
+    <div class="scroll-hint">Scroll to descend</div>
+  </section>
+
+  <!-- chapter 01 -->
+  <section class="chapter" aria-label="Chapter 1">
+    <div class="ch-inner">
+      <div class="ch-vertical">Deformed</div>
+      <div class="ch-body">
+        <div class="ch-kicker">01 / Collection</div>
+        <h2 class="ch-title">In concrete</h2>
+        <p class="ch-text">
+          Tailoring cast under pressure. Shoulders are poured like formwork,
+          waists fracture along the stress lines, hems carry the weight of the
+          slab. The collection begins where the body meets the wall — and
+          refuses to come out unchanged.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- chapter 02 -->
+  <section class="chapter" aria-label="Chapter 2">
+    <div class="ch-inner">
+      <div class="ch-vertical">Form</div>
+      <div class="ch-body">
+        <div class="ch-kicker">02 / Silhouette</div>
+        <h2 class="ch-title">Under pressure</h2>
+        <p class="ch-text">
+          Cropped blazers with cantilevered shoulders. Trousers that flare like
+          cracks running to the ground. Every look is a load-bearing structure:
+          strict on the surface, deformed at the core.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- chapter 03 -->
+  <section class="chapter" aria-label="Chapter 3">
+    <div class="ch-inner">
+      <div class="ch-vertical">Raw</div>
+      <div class="ch-body">
+        <div class="ch-kicker">03 / Craft</div>
+        <h2 class="ch-title">Surface &amp; seam</h2>
+        <p class="ch-text">
+          Dense wool, dry cotton, hardware stripped to zero. Seams stay exposed
+          like rebar — the garment admits how it was built. Nothing decorative
+          survives the pour.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- outro -->
+  <section class="outro">
+    <div class="o-kicker">The collection is a cast — see it in person</div>
+    <a class="o-link" href="contact.html">Contact</a>
+    <div class="o-foot">
+      <span>HORIN — Deformed in concrete</span>
+      <span>© 2026</span>
+    </div>
+  </section>
+
+  <div id="scroll-space"></div>
+
+  <script type="module" src="assets/js/scene.js"></script>
+</body>
+</html>
