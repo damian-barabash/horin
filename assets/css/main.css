@@ -733,9 +733,3 @@ body::after {
   .f-actions { flex-direction: column; align-items: flex-start; }
   .f-note { text-align: left; }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  body::after { animation: none; }
-  .scroll-hint::after { animation: none; }
-  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-}

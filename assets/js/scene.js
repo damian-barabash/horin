@@ -34,7 +34,10 @@ const smoothstep = (a, b, v) => {
 const easeInOut = (t) => t * t * (3 - 2 * t);
 const lerp = (a, b, t) => a + (b - a) * t;
 
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* NB: НЕ читаем prefers-reduced-motion — Windows с выключенными
+   «Эффектами анимации» репортит его и молча убивал всю анимацию сайта
+   (статичная спираль + дёрганый скролл без сглаживания) */
+const reduceMotion = false;
 
 /* ---------- renderer / scene ---------- */
 
