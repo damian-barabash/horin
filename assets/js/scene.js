@@ -205,7 +205,9 @@ loadManager.onLoad = () => { loadedFrac = 1; };
 
 function tickPreloader(now) {
   const timeFrac = clamp((now - t0) / MIN_PRELOAD, 0, 1);
-  const f = Math.min(loadedFrac, MIN_PRELOAD ? timeFrac : 1);
+  let f = Math.min(loadedFrac, MIN_PRELOAD ? timeFrac : 1);
+  // safety net: never trap the visitor on the preloader (slow/flaky network)
+  if (now - t0 > 10000) f = 1;
   plFill.style.height = `${(f * 100).toFixed(1)}%`;
   plCount.textContent = `${String(Math.round(f * 100)).padStart(3, '0')} %`;
   if (f >= 1) { flyUp(); return; }
