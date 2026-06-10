@@ -46,8 +46,8 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scrollbar-width: none; }
-html::-webkit-scrollbar { display: none; }
+html, body { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 
 html, body { height: 100%; }
 
@@ -461,6 +461,61 @@ body::after {
   opacity: 0.5;
 }
 
+/* ---------- lightbox ---------- */
+
+#lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+  background: rgba(4, 4, 4, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s var(--ease-io), visibility 0s 0.45s;
+  cursor: zoom-out;
+}
+#lightbox.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.45s var(--ease-io);
+}
+#lightbox img {
+  max-width: 92vw;
+  max-height: 86vh;
+  opacity: 0;
+  transform: scale(0.965);
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65);
+}
+#lightbox img.is-loaded { opacity: 1; transform: none; }
+
+.lb-num {
+  position: absolute;
+  top: 28px;
+  left: var(--pad);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--paper);
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+.lb-close {
+  position: absolute;
+  top: 28px;
+  right: var(--pad);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--paper);
+  opacity: 0.7;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+}
+
 /* ============================================================
    CONTACT PAGE
    ============================================================ */
@@ -712,6 +767,9 @@ body::after {
   .h-logo { width: 42px; height: 42px; }
   .h-brand { font-size: 12.5px; }
 
+  .hero h1 { font-size: clamp(28px, 9.2vw, 64px); }
+  .scroll-hint { display: none; }
+
   .ch-inner { flex-direction: column; gap: 22px; }
   .ch-vertical {
     writing-mode: horizontal-tb;
@@ -723,13 +781,33 @@ body::after {
 
   .hero .hero-sub { flex-direction: column; gap: 0.7em; }
 
-  .c-grid { flex-direction: column; }
+  .c-grid { flex-direction: column; gap: 14px; }
   .c-vertical {
     writing-mode: horizontal-tb;
     transform: none;
-    font-size: clamp(40px, 12vw, 64px);
+    font-size: clamp(30px, 9vw, 44px);
     animation-name: f-in;
   }
-  .f-actions { flex-direction: column; align-items: flex-start; }
+  .contact-main { padding-top: calc(var(--header-h) + 14px); padding-bottom: 28px; }
+  .c-intro { margin-bottom: 14px; }
+  .f-row { padding: 13px 0 10px; }
+  .f-num { top: 18px; }
+  .f-actions { flex-direction: column; align-items: flex-start; margin-top: 18px; }
+  .f-submit { padding: 17px 36px; }
   .f-note { text-align: left; }
+}
+
+/* short laptop screens: fit the whole contact form in one viewport */
+@media (min-width: 821px) and (max-height: 800px) {
+  .contact-main { padding-top: calc(var(--header-h) + 8px); padding-bottom: 22px; }
+  .c-vertical { font-size: clamp(36px, 11vh, 84px); }
+  .c-intro { margin-bottom: 14px; font-size: 12px; }
+  .f-row { padding: 11px 0 9px; }
+  .f-num { top: 15px; }
+  .f-label { margin-bottom: 3px; }
+  .f-row input { font-size: clamp(16px, 2.1vw, 22px); }
+  .f-row textarea { font-size: clamp(13px, 1.7vw, 17px); }
+  .f-pill { padding: 7px 15px; font-size: 10px; }
+  .f-actions { margin-top: 16px; }
+  .f-submit { padding: 15px 34px; }
 }

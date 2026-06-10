@@ -176,12 +176,15 @@ function slotLocal(j, out) {
   const d = 4.6 + rank * 1.3;
   const halfH = d * Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2));
   const halfW = halfH * camera.aspect;
-  const portrait = camera.aspect < 0.9;
-  const nx = side * (portrait ? 0.86 : 0.74 + rank * 0.055);
-  const ny = Math.sin(j * 1.7) * (portrait ? 0.52 : 0.48) - (portrait ? 0 : 0.07);
+  /* k: 1 = wide desktop (photo wall flanks the text),
+     0 = narrow window/phone (photos peek in from the screen edges,
+     centre stays clear so текст и фото не конфликтуют) */
+  const k = clamp((camera.aspect - 1.2) / 0.25, 0, 1);
+  const nx = side * lerp(1.06, 0.74 + rank * 0.055, k);
+  const ny = Math.sin(j * 1.7) * lerp(0.52, 0.48, k) - 0.07 * k;
   out.pos.set(nx * halfW, ny * halfH, -d);
   // photo width as a stable fraction of the viewport, deeper ranks smaller
-  out.scale = (halfW * (portrait ? 0.6 : 0.34 - rank * 0.02)) / 1.18;
+  out.scale = (halfW * lerp(0.62, 0.34 - rank * 0.02, k)) / 1.18;
   return out;
 }
 const slotTmp = { pos: new THREE.Vector3(), scale: 1 };
@@ -293,9 +296,59 @@ const cDarkBot = new THREE.Color(DARK.bottom);
 /* ---------- mouse parallax ---------- */
 
 let mx = 0, my = 0, mxS = 0, myS = 0;
+
+/* ---------- lightbox: click a photo to view it fullscreen ---------- */
+
+const lightbox = document.getElementById('lightbox');
+const lbImg = lightbox.querySelector('img');
+const lbNum = lightbox.querySelector('.lb-num');
+const raycaster = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+const photoMeshes = photos.map((ph) => ph.mesh);
+
+function photoAt(clientX, clientY) {
+  ndc.set((clientX / innerWidth) * 2 - 1, -(clientY / innerHeight) * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  const hit = raycaster
+    .intersectObjects(photoMeshes)
+    .find((h) => h.object.material.opacity > 0.35);
+  return hit ? photoMeshes.indexOf(hit.object) : -1;
+}
+
+function openLightbox(i) {
+  lbImg.classList.remove('is-loaded');
+  lbImg.onload = () => lbImg.classList.add('is-loaded');
+  lbImg.src = `assets/img/full/${IMGS[i]}.webp`;
+  lbNum.textContent = `${String(i + 1).padStart(2, '0')} / ${IMGS.length}`;
+  lightbox.classList.add('is-on');
+  document.body.classList.add('is-locked');
+}
+function closeLightbox() {
+  lightbox.classList.remove('is-on');
+  document.body.classList.remove('is-locked');
+}
+lightbox.addEventListener('click', closeLightbox);
+addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+/* tap vs scroll: track press distance, open on a genuine click only */
+let downX = 0, downY = 0;
+addEventListener('pointerdown', (e) => {
+  downX = e.clientX; downY = e.clientY;
+}, { passive: true });
+addEventListener('click', (e) => {
+  if (lightbox.classList.contains('is-on')) return;
+  if (e.target.closest('a, button, input, textarea')) return;
+  if (Math.hypot(e.clientX - downX, e.clientY - downY) > 10) return;
+  const i = photoAt(e.clientX, e.clientY);
+  if (i >= 0) openLightbox(i);
+});
+
 addEventListener('pointermove', (e) => {
   mx = (e.clientX / innerWidth - 0.5) * 2;
   my = (e.clientY / innerHeight - 0.5) * 2;
+  if (e.pointerType === 'mouse' && !lightbox.classList.contains('is-on')) {
+    document.body.style.cursor = photoAt(e.clientX, e.clientY) >= 0 ? 'pointer' : '';
+  }
 }, { passive: true });
 
 /* ---------- main loop ---------- */
