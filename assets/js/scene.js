@@ -118,7 +118,7 @@ colMat.onBeforeCompile = (shader) => {
     '#include <dithering_fragment>',
     `#include <dithering_fragment>
     float colFres = abs(dot(normalize(vViewPosition), normalize(vNormal)));
-    gl_FragColor.a *= pow(smoothstep(0.0, 1.0, colFres), 1.8);`
+    gl_FragColor.a *= pow(smoothstep(0.0, 1.1, colFres), 2.8);`
   );
 };
 const column = new THREE.Mesh(new THREE.CylinderGeometry(0.88, 0.99, 74, 72, 1), colMat);
@@ -171,13 +171,29 @@ IMGS.forEach((name, i) => {
    recede into depth, keeping the centre clear for the chapter text.
    Computed from NDC so the композиция держится на любом aspect. */
 function slotLocal(j, out) {
+  /* portrait phones: фото разъезжаются двумя лентами к верхнему и нижнему
+     краю экрана (5 сверху / 4 снизу), середина целиком под текст главы */
+  if (camera.aspect < 0.9) {
+    const top = j % 2 === 0;
+    const col = Math.floor(j / 2);
+    const n = top ? 5 : 4;
+    const d = 5.0 + (col % 2) * 1.1;
+    const halfH = d * Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2));
+    const halfW = halfH * camera.aspect;
+    const nx = (col - (n - 1) / 2) * 0.4;
+    const ny = (top ? 1 : -1) * (0.7 + Math.sin(j * 2.1) * 0.04);
+    out.pos.set(nx * halfW, ny * halfH, -d);
+    // photo height as a stable fraction of the viewport height
+    out.scale = (halfH * 0.34) / 1.77;
+    return out;
+  }
   const side = j % 2 === 0 ? -1 : 1;
   const rank = Math.floor(j / 2); // 0..4
   const d = 4.6 + rank * 1.3;
   const halfH = d * Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2));
   const halfW = halfH * camera.aspect;
   /* k: 1 = wide desktop (photo wall flanks the text),
-     0 = narrow window/phone (photos peek in from the screen edges,
+     0 = narrow window (photos peek in from the screen edges,
      centre stays clear so текст и фото не конфликтуют) */
   const k = clamp((camera.aspect - 1.2) / 0.25, 0, 1);
   const nx = side * lerp(1.06, 0.74 + rank * 0.055, k);
@@ -297,6 +313,14 @@ const cDarkBot = new THREE.Color(DARK.bottom);
 
 let mx = 0, my = 0, mxS = 0, myS = 0;
 
+/* ---------- language swap (i18n.js) ----------
+   detail 1 = спираль ныряет под кадр пока тексты гаснут,
+   detail 0 = поднимается обратно уже с новым языком */
+
+let langDipTarget = 0;
+let langDip = 0;
+addEventListener('horin:langdip', (e) => { langDipTarget = e.detail; });
+
 /* ---------- lightbox: click a photo to view it fullscreen ---------- */
 
 const lightbox = document.getElementById('lightbox');
@@ -315,6 +339,7 @@ function photoAt(clientX, clientY) {
   return hit ? photoMeshes.indexOf(hit.object) : -1;
 }
 
+let lbOpenedAt = -1;
 function openLightbox(i) {
   lbImg.classList.remove('is-loaded');
   lbImg.onload = () => lbImg.classList.add('is-loaded');
@@ -322,20 +347,44 @@ function openLightbox(i) {
   lbNum.textContent = `${String(i + 1).padStart(2, '0')} / ${IMGS.length}`;
   lightbox.classList.add('is-on');
   document.body.classList.add('is-locked');
+  lbOpenedAt = performance.now();
 }
 function closeLightbox() {
   lightbox.classList.remove('is-on');
   document.body.classList.remove('is-locked');
 }
-lightbox.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', () => {
+  // тач: синтезированный после открытия click хит-тестится уже по
+  // открытому lightbox — не даём ему мгновенно закрыть просмотр
+  if (performance.now() - lbOpenedAt < 500) return;
+  closeLightbox();
+});
 addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
 /* tap vs scroll: track press distance, open on a genuine click only */
 let downX = 0, downY = 0;
+let touchHandledAt = -1;
 addEventListener('pointerdown', (e) => {
   downX = e.clientX; downY = e.clientY;
 }, { passive: true });
+
+/* iOS Safari не синтезирует click по неинтерактивным элементам
+   (тап уходит в #scroll-space/canvas) — тач обрабатываем сами по
+   pointerup; скролл-жест отсеивается дистанцией, прерванный — браузер
+   шлёт pointercancel вместо pointerup */
+addEventListener('pointerup', (e) => {
+  if (e.pointerType === 'mouse') return; // мышь идёт через click ниже
+  if (Math.hypot(e.clientX - downX, e.clientY - downY) > 10) return;
+  touchHandledAt = performance.now();
+  if (lightbox.classList.contains('is-on')) { closeLightbox(); return; }
+  if (e.target.closest('a, button, input, textarea')) return;
+  const i = photoAt(e.clientX, e.clientY);
+  if (i >= 0) openLightbox(i);
+}, { passive: true });
+
 addEventListener('click', (e) => {
+  // браузеры, которые синтезируют click после тача, уже обработаны выше
+  if (performance.now() - touchHandledAt < 500) return;
   if (lightbox.classList.contains('is-on')) return;
   if (e.target.closest('a, button, input, textarea')) return;
   if (Math.hypot(e.clientX - downX, e.clientY - downY) > 10) return;
@@ -371,6 +420,8 @@ function frame(now) {
   colBottom.copy(cPaperBot).lerp(cDarkBot, dark);
   scene.fog.color.copy(colBottom);
   header.classList.toggle('is-inverse', dark > 0.55);
+
+  langDip += (langDipTarget - langDip) * (reduceMotion ? 1 : 0.075);
 
   /* column draw-in */
   if (sceneStart > 0) {
@@ -429,9 +480,13 @@ function frame(now) {
       mesh.scale.set(1, 1, 1);
     }
 
+    /* language swap: each photo dives below the frame, staggered by slot */
+    const phDip = easeInOut(clamp(langDip * 1.45 - ph.slot * 0.05, 0, 1));
+    if (phDip > 0.0005) mesh.position.y -= phDip * 8;
+
     /* focused block stays bright, the rest sink back */
     const dim = fMax > 0 ? (focuses[ph.block] === fMax && fMax > 0.01 ? 1 : 1 - fMax * 0.92) : 1;
-    mesh.material.opacity = enter * dim;
+    mesh.material.opacity = enter * dim * (1 - phDip);
   });
 
   /* DOM chapters */

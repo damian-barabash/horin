@@ -15,62 +15,69 @@
   <!-- header -->
   <header class="site-header is-on">
     <div class="h-project">
-      Deformed<br>in concrete
-      <small>Project</small>
+      <span data-i18n="hdr.project">Deformed<br>in concrete</span>
+      <small data-i18n="hdr.sub">Project</small>
     </div>
     <a class="h-logo" href="index.html" aria-label="HORIN home">
       <img src="assets/logo/logo.webp" alt="HORIN logo">
     </a>
     <div class="h-brand">
       HORIN
-      <a class="h-nav" href="index.html">Collection</a>
+      <a class="h-nav" href="index.html" data-i18n="nav.collection">Collection</a>
     </div>
   </header>
 
+  <!-- language switch -->
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button type="button" class="ls-btn is-on" data-lang="en">EN</button>
+    <span class="ls-sep">/</span>
+    <button type="button" class="ls-btn" data-lang="pl">PL</button>
+  </div>
+
   <main class="contact-main">
     <div class="c-grid">
-      <div class="c-vertical" aria-hidden="true">Contact</div>
+      <div class="c-vertical" aria-hidden="true" data-i18n="c.vertical">Contact</div>
 
       <form class="c-form" id="contact-form" novalidate>
-        <p class="c-intro">
+        <p class="c-intro" data-i18n="c.intro">
           Collaborations, private orders, press &amp; showroom requests.
           Leave a message — the atelier replies personally.
         </p>
 
         <div class="f-row">
           <span class="f-num">01</span>
-          <label class="f-label" for="f-name">Name</label>
-          <input id="f-name" name="name" type="text" placeholder="Your name" autocomplete="name" required>
+          <label class="f-label" for="f-name" data-i18n="f.name">Name</label>
+          <input id="f-name" name="name" type="text" placeholder="Your name" data-i18n-ph="f.name.ph" autocomplete="name" required>
         </div>
 
         <div class="f-row">
           <span class="f-num">02</span>
-          <label class="f-label" for="f-email">Email</label>
-          <input id="f-email" name="email" type="email" placeholder="you@mail.com" autocomplete="email" required>
+          <label class="f-label" for="f-email" data-i18n="f.email">Email</label>
+          <input id="f-email" name="email" type="email" placeholder="you@mail.com" data-i18n-ph="f.email.ph" autocomplete="email" required>
         </div>
 
         <div class="f-row">
           <span class="f-num">03</span>
-          <span class="f-label">Subject</span>
+          <span class="f-label" data-i18n="f.subject">Subject</span>
           <div class="f-pills" role="group" aria-label="Subject">
-            <button type="button" class="f-pill is-on" data-topic="Collaboration">Collaboration</button>
-            <button type="button" class="f-pill" data-topic="Private order">Private order</button>
-            <button type="button" class="f-pill" data-topic="Press">Press</button>
-            <button type="button" class="f-pill" data-topic="Other">Other</button>
+            <button type="button" class="f-pill is-on" data-topic="Collaboration" data-i18n="pill.collab">Collaboration</button>
+            <button type="button" class="f-pill" data-topic="Private order" data-i18n="pill.order">Private order</button>
+            <button type="button" class="f-pill" data-topic="Press" data-i18n="pill.press">Press</button>
+            <button type="button" class="f-pill" data-topic="Other" data-i18n="pill.other">Other</button>
           </div>
         </div>
 
         <div class="f-row">
           <span class="f-num">04</span>
-          <label class="f-label" for="f-msg">Message</label>
-          <textarea id="f-msg" name="message" rows="2" placeholder="Tell the atelier what you have in mind…" required></textarea>
+          <label class="f-label" for="f-msg" data-i18n="f.msg">Message</label>
+          <textarea id="f-msg" name="message" rows="2" placeholder="Tell the atelier what you have in mind…" data-i18n-ph="f.msg.ph" required></textarea>
         </div>
 
         <div class="f-actions">
-          <button class="f-submit" type="submit">
+          <button class="f-submit" type="submit" data-i18n="f.send">
             Send <span class="s-arrow">→</span>
           </button>
-          <div class="f-note">
+          <div class="f-note" data-i18n="f.note">
             HORIN atelier<br>
             Deformed in concrete — Collection N°1
           </div>
@@ -85,11 +92,12 @@
       <div class="pl-layer pl-ghost"></div>
       <div class="pl-layer pl-fill-wrap"><div class="pl-fill"></div></div>
     </div>
-    <div class="cs-title">Received</div>
-    <div class="cs-sub">The atelier will reply personally</div>
-    <a class="cs-back" href="index.html">Back to the collection</a>
+    <div class="cs-title" data-i18n="cs.title">Received</div>
+    <div class="cs-sub" data-i18n="cs.sub">The atelier will reply personally</div>
+    <a class="cs-back" href="index.html" data-i18n="cs.back">Back to the collection</a>
   </div>
 
+  <script src="assets/js/i18n.js" defer></script>
   <script src="assets/js/contact.js"></script>
 </body>
 </html>
