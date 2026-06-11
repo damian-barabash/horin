@@ -1,24 +1,39 @@
 /* HORIN — DEFORMED IN CONCRETE
    fixed Three.js scene: grey concrete column + 27 photos in a spiral.
-   Scroll twists the spiral, three chapters pull their photos toward
-   the camera while the chapter text fades in, then release them back. */
+   Scroll twists the spiral; the manifest and six look chapters pull
+   their photos toward the camera while the text fades in, then release
+   them back. Photos are grouped by look (visual attribution from the
+   shoot), so each chapter surfaces the silhouette it describes. */
 
 import * as THREE from 'three';
 
+/* spiral order = look order; counts per look in LOOKS below */
 const IMGS = [
-  'mg_0043', 'mg_0046', 'mg_0049', 'mg_0084', 'mg_0124', 'mg_0134',
-  'mg_0135', 'mg_0218', 'mg_0228', 'mg_0243', 'mg_9724', 'mg_9751',
-  'mg_9754', 'mg_9794', 'mg_9799', 'mg_9809', 'mg_9834', 'mg_9834_1',
-  'mg_9835', 'mg_9880', 'mg_9913', 'mg_9950', 'mg_9951', 'mg_9971',
-  'mg_9991', 'mg_9995', 'mg_9996',
+  // look 1 — modular repetition (triple rounded sleeves)
+  'mg_0084', 'mg_0124', 'mg_0134', 'mg_0135',
+  // look 2 — geometry & layering (open unstitched sides)
+  'mg_9834', 'mg_9834_1', 'mg_9835', 'mg_9880',
+  // look 3 — greyness (multiplied collars / flared trousers)
+  'mg_0043', 'mg_0046', 'mg_0049',
+  // look 4 — soviet references (shirts as sleeves)
+  'mg_9751', 'mg_9754', 'mg_9794', 'mg_9799', 'mg_9809',
+  // look 5 — structural exploration (triangular wired trousers)
+  'mg_9913', 'mg_9950', 'mg_9951', 'mg_9991', 'mg_9995', 'mg_9996',
+  // look 6 — asymmetry (top / corset / skirt from trousers)
+  'mg_0218', 'mg_0228', 'mg_0243', 'mg_9724', 'mg_9971',
 ];
 
-const PER_BLOCK = 9;
-const CHAPTERS = [
-  { range: [0.16, 0.38] },
-  { range: [0.44, 0.64] },
-  { range: [0.70, 0.88] },
+/* p-ranges: [0] = manifest (text only, no photo focus), [1..6] = looks */
+const SECTIONS = [
+  { range: [0.070, 0.170], count: 0 },
+  { range: [0.215, 0.315], count: 4 },
+  { range: [0.329, 0.429], count: 4 },
+  { range: [0.443, 0.543], count: 3 },
+  { range: [0.557, 0.657], count: 5 },
+  { range: [0.671, 0.771], count: 6 },
+  { range: [0.785, 0.885], count: 5 },
 ];
+const FOCUS_EDGE = 0.035;
 
 const SPIRAL = { radius: 2.9, stepY: 0.8, topY: 1.4, anglePer: (Math.PI * 2) / 7.2 };
 const CAM = { z: 9.0, fov: 42, yFrom: 2.4, yTo: -21.0 };
@@ -157,12 +172,19 @@ IMGS.forEach((name, i) => {
   const mesh = new THREE.Mesh(photoGeo, mat);
   mesh.renderOrder = 1;
   scene.add(mesh);
+  /* which look-section owns this photo (sections[0] = manifest, no photos) */
+  let block = 1, acc = 0;
+  while (block < SECTIONS.length && i >= acc + SECTIONS[block].count) {
+    acc += SECTIONS[block].count;
+    block += 1;
+  }
   photos.push({
     mesh,
     theta: i * SPIRAL.anglePer,
     baseY: SPIRAL.topY - i * SPIRAL.stepY,
-    block: Math.floor(i / PER_BLOCK),
-    slot: i % PER_BLOCK,
+    block,
+    slot: i - acc,
+    blockSize: SECTIONS[block].count,
     entered: 0,
   });
 });
@@ -170,17 +192,18 @@ IMGS.forEach((name, i) => {
 /* showcase slot in camera-local space: photos hug the screen edges and
    recede into depth, keeping the centre clear for the chapter text.
    Computed from NDC so the композиция держится на любом aspect. */
-function slotLocal(j, out) {
+function slotLocal(j, n, out) {
   /* portrait phones: фото разъезжаются двумя лентами к верхнему и нижнему
-     краю экрана (5 сверху / 4 снизу), середина целиком под текст главы */
+     краю экрана (чётные слоты сверху / нечётные снизу), середина целиком
+     под текст главы; n = размер блока этого лука (3..6 фото) */
   if (camera.aspect < 0.9) {
     const top = j % 2 === 0;
     const col = Math.floor(j / 2);
-    const n = top ? 5 : 4;
+    const cnt = top ? Math.ceil(n / 2) : Math.floor(n / 2);
     const d = 5.0 + (col % 2) * 1.1;
     const halfH = d * Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2));
     const halfW = halfH * camera.aspect;
-    const nx = (col - (n - 1) / 2) * 0.4;
+    const nx = (col - (cnt - 1) / 2) * 0.4;
     const ny = (top ? 1 : -1) * (0.7 + Math.sin(j * 2.1) * 0.04);
     out.pos.set(nx * halfW, ny * halfH, -d);
     // photo height as a stable fraction of the viewport height
@@ -188,7 +211,7 @@ function slotLocal(j, out) {
     return out;
   }
   const side = j % 2 === 0 ? -1 : 1;
-  const rank = Math.floor(j / 2); // 0..4
+  const rank = Math.floor(j / 2); // 0..2 (blocks are 3..6 photos)
   const d = 4.6 + rank * 1.3;
   const halfH = d * Math.tan(THREE.MathUtils.degToRad(CAM.fov / 2));
   const halfW = halfH * camera.aspect;
@@ -200,7 +223,7 @@ function slotLocal(j, out) {
   const ny = Math.sin(j * 1.7) * lerp(0.52, 0.48, k) - 0.07 * k;
   out.pos.set(nx * halfW, ny * halfH, -d);
   // photo width as a stable fraction of the viewport, deeper ranks smaller
-  out.scale = (halfW * lerp(0.62, 0.34 - rank * 0.02, k)) / 1.18;
+  out.scale = (halfW * lerp(0.62, 0.36 - rank * 0.02, k)) / 1.18;
   return out;
 }
 const slotTmp = { pos: new THREE.Vector3(), scale: 1 };
@@ -277,7 +300,7 @@ requestAnimationFrame(tickPreloader);
 
 /* ---------- scroll / DOM blocks ---------- */
 
-const chapterEls = [...document.querySelectorAll('.chapter')];
+const chapterEls = [...document.querySelectorAll('.chapter')]; // [0] = manifest
 const outroEl = document.querySelector('.outro');
 const bgDarkEl = document.getElementById('bg-dark');
 
@@ -291,6 +314,25 @@ function setCached(key, apply, value, eps = 0.002) {
   apply(value);
 }
 
+/* long chapter texts scroll inside their clipped box as the visitor
+   moves through the chapter window — измеряем переполнение заранее */
+const chTexts = chapterEls.map((el) => ({
+  clip: el.querySelector('.ch-clip'),
+  text: el.querySelector('.ch-text'),
+  ov: 0,
+}));
+function measureTexts() {
+  chTexts.forEach((ct, k) => {
+    if (!ct.clip) return;
+    ct.text.style.transform = '';
+    styleCache.delete(`txt${k}`);
+    ct.ov = Math.max(0, ct.text.scrollHeight - ct.clip.clientHeight);
+    ct.clip.classList.toggle('is-overflow', ct.ov > 4);
+  });
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureTexts);
+measureTexts();
+
 let pTarget = 0;
 let p = 0;
 
@@ -301,8 +343,11 @@ function readScroll() {
 addEventListener('scroll', readScroll, { passive: true });
 
 function chapterFocus(k, prog) {
-  const [a, b] = CHAPTERS[k].range;
-  return Math.min(smoothstep(a, a + 0.06, prog), 1 - smoothstep(b - 0.06, b, prog));
+  const [a, b] = SECTIONS[k].range;
+  return Math.min(
+    smoothstep(a, a + FOCUS_EDGE, prog),
+    1 - smoothstep(b - FOCUS_EDGE, b, prog)
+  );
 }
 
 const colBottom = new THREE.Color();
@@ -319,7 +364,11 @@ let mx = 0, my = 0, mxS = 0, myS = 0;
 
 let langDipTarget = 0;
 let langDip = 0;
-addEventListener('horin:langdip', (e) => { langDipTarget = e.detail; });
+addEventListener('horin:langdip', (e) => {
+  langDipTarget = e.detail;
+  // detail 0 = новый язык уже применён — перемеряем переполнение текстов
+  if (e.detail === 0) measureTexts();
+});
 
 /* ---------- lightbox: click a photo to view it fullscreen ---------- */
 
@@ -413,9 +462,10 @@ function frame(now) {
 
   p += (pTarget - p) * (reduceMotion ? 1 : 0.07);
 
-  /* background: stay light on the cover, sink into black.
+  /* background: stay light on the cover, sink into black before the
+     manifest text arrives (white type needs the dark ground).
      Crossfade of two static gradients — opacity only, no repaint */
-  const dark = smoothstep(0.05, 0.30, p);
+  const dark = smoothstep(0.035, 0.13, p);
   setCached('bgDark', (v) => { bgDarkEl.style.opacity = v.toFixed(3); }, dark);
   colBottom.copy(cPaperBot).lerp(cDarkBot, dark);
   scene.fog.color.copy(colBottom);
@@ -439,8 +489,8 @@ function frame(now) {
   camera.lookAt(0, camY - 0.7, 0);
   camera.updateMatrixWorld();
 
-  /* chapter focuses */
-  const focuses = CHAPTERS.map((_, k) => chapterFocus(k, p));
+  /* section focuses: [0] = manifest, [1..6] = looks */
+  const focuses = SECTIONS.map((_, k) => chapterFocus(k, p));
   const fMax = Math.max(...focuses);
 
   /* spiral twist */
@@ -467,7 +517,7 @@ function frame(now) {
 
     const f = easeInOut(focuses[ph.block]);
     if (f > 0.001) {
-      slotLocal(ph.slot, slotTmp);
+      slotLocal(ph.slot, ph.blockSize, slotTmp);
       tmpV.copy(slotTmp.pos).applyMatrix4(camera.matrixWorld);
       mesh.position.set(lerp(sx, tmpV.x, f), lerp(sy, tmpV.y, f), lerp(sz, tmpV.z, f));
       tmpQ.copy(camera.quaternion);
@@ -484,12 +534,14 @@ function frame(now) {
     const phDip = easeInOut(clamp(langDip * 1.45 - ph.slot * 0.05, 0, 1));
     if (phDip > 0.0005) mesh.position.y -= phDip * 8;
 
-    /* focused block stays bright, the rest sink back */
+    /* focused block stays bright, the rest sink back; во время манифеста
+       (focuses[0], ни один блок фото им не владеет) гаснут все — текст
+       читается поверх спокойной спирали */
     const dim = fMax > 0 ? (focuses[ph.block] === fMax && fMax > 0.01 ? 1 : 1 - fMax * 0.92) : 1;
     mesh.material.opacity = enter * dim * (1 - phDip);
   });
 
-  /* DOM chapters */
+  /* DOM chapters (manifest + 6 looks) */
   chapterEls.forEach((el, k) => {
     const f = focuses[k];
     setCached(`ch${k}`, (v) => {
@@ -497,11 +549,23 @@ function frame(now) {
       el.style.visibility = v > 0.005 ? 'visible' : 'hidden';
       el.style.setProperty('--chOff', (1 - easeInOut(v)) * 26);
     }, f);
+
+    /* overflowing text crawls up through the clip while the chapter
+       window is scrolled — длинные описания читаются целиком */
+    const ct = chTexts[k];
+    if (ct.ov > 0 && f > 0.001) {
+      const [a, b] = SECTIONS[k].range;
+      const inner = clamp((p - a) / (b - a), 0, 1);
+      const tt = clamp((inner - 0.22) / 0.56, 0, 1);
+      setCached(`txt${k}`, (v) => {
+        ct.text.style.transform = `translateY(${(-v).toFixed(1)}px)`;
+      }, ct.ov * tt, 0.5);
+    }
   });
 
   /* hero out, outro in (held back until the logo lands) */
   const heroIn = sceneStart > 0 ? clamp((now - sceneStart) / 700, 0, 1) : 0;
-  const heroF = (1 - smoothstep(0.015, 0.085, p)) * easeInOut(heroIn);
+  const heroF = (1 - smoothstep(0.012, 0.055, p)) * easeInOut(heroIn);
   setCached('hero', (v) => {
     hero.style.opacity = v.toFixed(3);
     hero.style.visibility = v > 0.005 ? 'visible' : 'hidden';
@@ -522,6 +586,7 @@ addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
   applyResponsive();
+  measureTexts();
 });
 
 readScroll();
