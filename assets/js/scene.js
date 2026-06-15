@@ -1,5 +1,5 @@
 /* HORIN — DEFORMED IN CONCRETE
-   fixed Three.js scene: grey concrete column + 27 photos in a spiral.
+   fixed Three.js scene: grey concrete column + 31 photos in a spiral.
    Scroll twists the spiral; the manifest and six look chapters pull
    their photos toward the camera while the text fades in, then release
    them back. Photos are grouped by look (visual attribution from the
@@ -7,30 +7,33 @@
 
 import * as THREE from 'three';
 
-/* spiral order = look order; counts per look in LOOKS below */
+/* spiral order = look order; counts per look in SECTIONS below.
+   NB: 31 colour photos (new set 2026-06-15). Photo↔look attribution
+   here is provisional (filename order, ~5 per look) — reorder names
+   between the look comments to fix which silhouette each chapter shows. */
 const IMGS = [
   // look 1 — modular repetition (triple rounded sleeves)
-  'mg_0084', 'mg_0124', 'mg_0134', 'mg_0135',
+  'mg_0004', 'mg_0010', 'mg_0031', 'mg_0033', 'mg_0046', 'mg_0061',
   // look 2 — geometry & layering (open unstitched sides)
-  'mg_9834', 'mg_9834_1', 'mg_9835', 'mg_9880',
+  'mg_0062', 'mg_0116', 'mg_0124', 'mg_0138', 'mg_0149',
   // look 3 — greyness (multiplied collars / flared trousers)
-  'mg_0043', 'mg_0046', 'mg_0049',
+  'mg_0166', 'mg_0189', 'mg_0199', 'mg_0205', 'mg_0209',
   // look 4 — soviet references (shirts as sleeves)
-  'mg_9751', 'mg_9754', 'mg_9794', 'mg_9799', 'mg_9809',
+  'mg_0251_1', 'mg_0252', 'mg_9636', 'mg_9642', 'mg_9865',
   // look 5 — structural exploration (triangular wired trousers)
-  'mg_9913', 'mg_9950', 'mg_9951', 'mg_9991', 'mg_9995', 'mg_9996',
+  'mg_9884', 'mg_9909', 'mg_9910', 'mg_9913', 'mg_9918',
   // look 6 — asymmetry (top / corset / skirt from trousers)
-  'mg_0218', 'mg_0228', 'mg_0243', 'mg_9724', 'mg_9971',
+  'mg_9942', 'mg_9945', 'mg_9965', 'mg_9986', 'mg_9990_1',
 ];
 
 /* p-ranges: [0] = manifest (text only, no photo focus), [1..6] = looks */
 const SECTIONS = [
   { range: [0.070, 0.170], count: 0 },
-  { range: [0.215, 0.315], count: 4 },
-  { range: [0.329, 0.429], count: 4 },
-  { range: [0.443, 0.543], count: 3 },
+  { range: [0.215, 0.315], count: 6 },
+  { range: [0.329, 0.429], count: 5 },
+  { range: [0.443, 0.543], count: 5 },
   { range: [0.557, 0.657], count: 5 },
-  { range: [0.671, 0.771], count: 6 },
+  { range: [0.671, 0.771], count: 5 },
   { range: [0.785, 0.885], count: 5 },
 ];
 const FOCUS_EDGE = 0.035;
