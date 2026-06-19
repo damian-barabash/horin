@@ -1,5 +1,5 @@
 /* HORIN — DEFORMED IN CONCRETE
-   fixed Three.js scene: grey concrete column + 31 photos in a spiral.
+   fixed Three.js scene: grey concrete column + 49 photos in a spiral.
    Scroll twists the spiral; the manifest and six look chapters pull
    their photos toward the camera while the text fades in, then release
    them back. Photos are grouped by look (visual attribution from the
@@ -8,33 +8,37 @@
 import * as THREE from 'three';
 
 /* spiral order = look order; counts per look in SECTIONS below.
-   NB: 31 colour photos (new set 2026-06-15). Photo↔look attribution
-   here is provisional (filename order, ~5 per look) — reorder names
-   between the look comments to fix which silhouette each chapter shows. */
+   NB: 49 colour photos (new set 2026-06-19), grouped by silhouette to
+   match the six look chapters (look 1..6 = the designer's silhouettes 1..6).
+   Reorder names between the look comments to tweak which photo lands in
+   which slot; counts in SECTIONS must keep summing to IMGS.length. */
 const IMGS = [
-  // look 1 — modular repetition (triple rounded sleeves)
-  'mg_0004', 'mg_0010', 'mg_0031', 'mg_0033', 'mg_0046', 'mg_0061',
-  // look 2 — geometry & layering (open unstitched sides)
-  'mg_0062', 'mg_0116', 'mg_0124', 'mg_0138', 'mg_0149',
-  // look 3 — greyness (multiplied collars / flared trousers)
-  'mg_0166', 'mg_0189', 'mg_0199', 'mg_0205', 'mg_0209',
-  // look 4 — soviet references (shirts as sleeves)
-  'mg_0251_1', 'mg_0252', 'mg_9636', 'mg_9642', 'mg_9865',
-  // look 5 — structural exploration (triangular wired trousers)
-  'mg_9884', 'mg_9909', 'mg_9910', 'mg_9913', 'mg_9918',
-  // look 6 — asymmetry (top / corset / skirt from trousers)
-  'mg_9942', 'mg_9945', 'mg_9965', 'mg_9986', 'mg_9990_1',
+  // look 1 — modular repetition (cropped sculptural blazer, rounded sleeves)
+  'mg_9913', 'mg_9909', 'mg_9918', 'mg_9910', 'mg_9945', 'mg_9884',
+  'mg_9822', 'mg_9942', 'mg_9834', 'mg_9853', 'mg_9859',
+  // look 2 — geometry & layering (tailored blazer over white shirt)
+  'mg_0031', 'mg_9811', 'mg_0046', 'mg_9865', 'mg_9814', 'mg_0033',
+  // look 3 — greyness (two-tone jacket, multiplied collars + button skirt)
+  'mg_9642', 'mg_9636', 'mg_9648', 'mg_9720', 'mg_9685', 'mg_9678',
+  // look 4 — soviet references (boxy vest, white shirt as sleeves, clip trousers)
+  'mg_9731', 'mg_9733', 'mg_9739', 'mg_9810', 'mg_9801',
+  'mg_0116', 'mg_0124', 'mg_9788', 'mg_9772', 'mg_9775',
+  // look 5 — structural exploration (corset + flared trousers)
+  'mg_9965', 'mg_9990_1', 'mg_0010', 'mg_0004', 'mg_9986', 'mg_0062', 'mg_0061',
+  // look 6 — asymmetry (white top + deconstructed black drape)
+  'mg_0149', 'mg_0138', 'mg_0205', 'mg_0199', 'mg_0189',
+  'mg_0166', 'mg_0251_1', 'mg_0252', 'mg_0209',
 ];
 
 /* p-ranges: [0] = manifest (text only, no photo focus), [1..6] = looks */
 const SECTIONS = [
   { range: [0.070, 0.170], count: 0 },
-  { range: [0.215, 0.315], count: 6 },
-  { range: [0.329, 0.429], count: 5 },
-  { range: [0.443, 0.543], count: 5 },
-  { range: [0.557, 0.657], count: 5 },
-  { range: [0.671, 0.771], count: 5 },
-  { range: [0.785, 0.885], count: 5 },
+  { range: [0.215, 0.315], count: 11 },
+  { range: [0.329, 0.429], count: 6 },
+  { range: [0.443, 0.543], count: 6 },
+  { range: [0.557, 0.657], count: 10 },
+  { range: [0.671, 0.771], count: 7 },
+  { range: [0.785, 0.885], count: 9 },
 ];
 const FOCUS_EDGE = 0.035;
 
