@@ -101,15 +101,15 @@
     },
 
     pl: {
-      'title.index': 'HORIN — Zdeformowane w betonie',
+      'title.index': 'HORIN — Deformed in Concrete',
       'title.contact': 'Kontakt — HORIN',
 
-      'hdr.project': 'Zdeformowane<br>w betonie',
+      'hdr.project': 'Deformed<br>in concrete',
       'hdr.sub': 'Projekt',
       'nav.contact': 'Kontakt',
       'nav.collection': 'Kolekcja',
 
-      'hero.title': 'Zdeformowane w&nbsp;betonie',
+      'hero.title': 'Deformed in&nbsp;concrete',
       'hero.by': 'Projekt HORIN',
       'hero.no': 'Kolekcja N°1',
       'hero.hint': 'Przewiń, by zejść niżej',
@@ -168,7 +168,7 @@
 
       'outro.kicker': 'Kolekcja jest odlewem — zobacz ją na żywo',
       'outro.link': 'Kontakt',
-      'outro.brand': 'HORIN — Zdeformowane w betonie',
+      'outro.brand': 'HORIN — Deformed in concrete',
 
       'lb.close': 'Zamknij',
 
@@ -188,7 +188,7 @@
       'f.msg': 'Wiadomość',
       'f.msg.ph': 'Napisz atelier, co masz na myśli…',
       'f.send': 'Wyślij <span class="s-arrow">→</span>',
-      'f.note': 'Atelier HORIN<br>Zdeformowane w betonie — Kolekcja N°1',
+      'f.note': 'Atelier HORIN<br>Deformed in Concrete — Kolekcja N°1',
       'cs.title': 'Otrzymano',
       'cs.sub': 'Atelier odpowie osobiście',
       'cs.back': 'Wróć do kolekcji',

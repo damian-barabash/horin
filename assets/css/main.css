@@ -341,8 +341,6 @@ body:not(.is-locked) .lang-switch {
   letter-spacing: 0.005em;
   max-width: 12ch;
 }
-/* PL: «Zdeformowane» длиннее «Deformed» — чуть мельче, чтобы не резалось */
-html[lang="pl"] .hero h1 { font-size: clamp(26px, 6vw, 92px); }
 .hero .hero-sub {
   margin-top: 18px;
   font-size: clamp(11px, 1.05vw, 14px);
