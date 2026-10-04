@@ -1,11 +1,15 @@
 /* HORIN — contact page interactions */
 
+import { rpc } from './content.js';
+
 (() => {
   const form = document.getElementById('contact-form');
   const rows = [...form.querySelectorAll('.f-row')];
   const pills = [...form.querySelectorAll('.f-pill')];
   const submit = form.querySelector('.f-submit');
   const success = document.querySelector('.c-success');
+  const note = form.querySelector('.f-note');
+  let sending = false;
 
   /* row focus / filled states */
   rows.forEach((row) => {
@@ -78,22 +82,36 @@
       return;
     }
 
-    // TODO: подключить реальную отправку (endpoint / Supabase / Resend) —
-    // пока письмо собирается, показываем подтверждение.
-    const payload = {
-      name: name.value.trim(),
-      email: email.value.trim(),
-      topic,
-      message: msg.value.trim(),
-      at: new Date().toISOString(),
-    };
-    console.log('HORIN contact form:', payload);
+    if (sending) return;
+    sending = true;
+    submit.classList.add('is-sending');
+    note.classList.remove('is-error');
 
-    success.classList.add('is-on');
-    requestAnimationFrame(() => {
+    /* Supabase RPC `submit_message` — заявка попадает в админку (Zgłoszenia) */
+    rpc('submit_message', {
+      p_name: name.value.trim(),
+      p_email: email.value.trim(),
+      p_topic: topic,
+      p_message: msg.value.trim(),
+      p_lang: window.HORIN_I18N ? window.HORIN_I18N.lang : 'en',
+      p_page: 'contact',
+      p_hp: form.querySelector('.f-hp').value,
+    }).then(() => {
+      success.classList.add('is-on');
       requestAnimationFrame(() => {
-        success.querySelector('.pl-fill').style.height = '100%';
+        requestAnimationFrame(() => {
+          success.querySelector('.pl-fill').style.height = '100%';
+        });
       });
+    }).catch((err) => {
+      const rate = err.detail && /rate_limited/.test(err.detail.message || '');
+      const t = window.HORIN_I18N ? window.HORIN_I18N.t(rate ? 'f.rate' : 'f.error') : 'Could not send — please try again';
+      note.innerHTML = t;
+      note.classList.add('is-error');
+      shake(submit.closest('.f-actions'));
+    }).finally(() => {
+      sending = false;
+      submit.classList.remove('is-sending');
     });
   });
 })();

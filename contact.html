@@ -31,7 +31,7 @@
   <link rel="preload" href="assets/fonts/Benzin-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/main.css">
 </head>
-<body class="contact-page">
+<body class="contact-page" data-page="contact">
 
   <!-- header -->
   <header class="site-header is-on">
@@ -45,6 +45,7 @@
     <div class="h-brand">
       HORIN
       <a class="h-nav" href="index.html" data-i18n="nav.collection">Collection</a>
+      <a class="h-dawid" href="twoj-dawid.html" aria-label="Twój Dawid — stage costume"><span class="hd-dot"></span>Twój Dawid</a>
     </div>
   </header>
 
@@ -88,6 +89,9 @@
           </div>
         </div>
 
+        <!-- honeypot: hidden from people, bots fill it -->
+        <input class="f-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
         <div class="f-row">
           <span class="f-num">04</span>
           <label class="f-label" for="f-msg" data-i18n="f.msg">Message</label>
@@ -95,8 +99,8 @@
         </div>
 
         <div class="f-actions">
-          <button class="f-submit" type="submit" data-i18n="f.send">
-            Send <span class="s-arrow">→</span>
+          <button class="f-submit" type="submit">
+            <span data-i18n="f.send">Send</span> <span class="s-arrow">→</span>
           </button>
           <div class="f-note" data-i18n="f.note">
             HORIN atelier<br>
@@ -118,7 +122,8 @@
     <a class="cs-back" href="index.html" data-i18n="cs.back">Back to the collection</a>
   </div>
 
+  <script src="assets/js/dict.js" defer></script>
   <script src="assets/js/i18n.js" defer></script>
-  <script src="assets/js/contact.js"></script>
+  <script type="module" src="assets/js/contact.js"></script>
 </body>
 </html>

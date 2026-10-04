@@ -6,13 +6,16 @@
    shoot), so each chapter surfaces the silhouette it describes. */
 
 import * as THREE from 'three';
+import { contentReady, photosFor } from './content.js';
+
+const t0 = performance.now();
 
 /* spiral order = look order; counts per look in SECTIONS below.
    NB: 49 colour photos (new set 2026-06-19), grouped by silhouette to
    match the six look chapters (look 1..6 = the designer's silhouettes 1..6).
-   Reorder names between the look comments to tweak which photo lands in
-   which slot; counts in SECTIONS must keep summing to IMGS.length. */
-const IMGS = [
+   This is the built-in fallback: the live order comes from the admin panel
+   (Supabase `photos`, collection 'concrete') — see the block below. */
+const DEFAULT_IMGS = [
   // look 1 — modular repetition (cropped sculptural blazer, rounded sleeves)
   'mg_9913', 'mg_9909', 'mg_9918', 'mg_9910', 'mg_9945', 'mg_9884',
   'mg_9822', 'mg_9942', 'mg_9834', 'mg_9853', 'mg_9859',
@@ -41,6 +44,19 @@ const SECTIONS = [
   { range: [0.785, 0.885], count: 9 },
 ];
 const FOCUS_EDGE = 0.035;
+
+/* photos edited in the admin panel: [{ s: look 1..6, src, full }] in order.
+   No backend answer and no cache → the built-in set above */
+let IMGS = DEFAULT_IMGS.map((n) => ({ src: `assets/img/${n}.webp`, full: `assets/img/full/${n}.webp` }));
+const live = photosFor(await contentReady, 'concrete');
+if (live) {
+  IMGS = [];
+  for (let k = 1; k < SECTIONS.length; k++) {
+    const look = live.filter((ph) => ph.s === k);
+    SECTIONS[k].count = look.length;
+    look.forEach((ph) => IMGS.push({ src: ph.src, full: ph.full || ph.src }));
+  }
+}
 
 const SPIRAL = { radius: 2.9, stepY: 0.8, topY: 1.4, anglePer: (Math.PI * 2) / 7.2 };
 const CAM = { z: 9.0, fov: 42, yFrom: 2.4, yTo: -21.0 };
@@ -165,8 +181,8 @@ const texLoader = new THREE.TextureLoader(loadManager);
 const photoGeo = new THREE.PlaneGeometry(1.18, 1.77);
 const photos = [];
 
-IMGS.forEach((name, i) => {
-  const tex = texLoader.load(`assets/img/${name}.webp`);
+IMGS.forEach((img, i) => {
+  const tex = texLoader.load(img.src);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
   const mat = new THREE.MeshBasicMaterial({
@@ -248,7 +264,6 @@ const hero = document.querySelector('.hero');
 let loadedFrac = 0;
 let sceneStart = -1;
 const MIN_PRELOAD = reduceMotion ? 0 : 1400;
-const t0 = performance.now();
 
 loadManager.onProgress = (_u, done, total) => {
   loadedFrac = done / total;
@@ -399,7 +414,7 @@ let lbOpenedAt = -1;
 function openLightbox(i) {
   lbImg.classList.remove('is-loaded');
   lbImg.onload = () => lbImg.classList.add('is-loaded');
-  lbImg.src = `assets/img/full/${IMGS[i]}.webp`;
+  lbImg.src = IMGS[i].full;
   lbNum.textContent = `${String(i + 1).padStart(2, '0')} / ${IMGS.length}`;
   lightbox.classList.add('is-on');
   document.body.classList.add('is-locked');
@@ -595,6 +610,23 @@ addEventListener('resize', () => {
   applyResponsive();
   measureTexts();
 });
+
+/* admin live preview: jump to the block that shows a given text key */
+window.HORIN_GOTO = (key) => {
+  const el = document.querySelector(`[data-i18n="${key}"]`);
+  if (!el) return;
+  const ch = el.closest('.chapter');
+  let to = 0;
+  if (ch) {
+    const [a, b] = SECTIONS[chapterEls.indexOf(ch)].range;
+    to = a + (b - a) * 0.3;
+  } else if (el.closest('.outro')) to = 1;
+  const go = () => {
+    if (document.body.classList.contains('is-locked')) { setTimeout(go, 200); return; }
+    scrollTo(0, to * (document.documentElement.scrollHeight - innerHeight));
+  };
+  go();
+};
 
 readScroll();
 requestAnimationFrame(frame);

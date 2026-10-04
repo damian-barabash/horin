@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HORIN — panel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0b0b0c">
+  <link rel="icon" type="image/png" href="assets/logo/favicon.png">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+  <!-- login -->
+  <main id="login" class="login" hidden>
+    <form class="login-card" id="login-form" novalidate>
+      <img class="login-logo" src="assets/logo/logo.webp" alt="HORIN">
+      <h1>Panel HORIN</h1>
+      <label class="fld">
+        <span>E-mail</span>
+        <input id="login-email" type="email" autocomplete="username" required>
+      </label>
+      <label class="fld">
+        <span>Hasło</span>
+        <input id="login-pass" type="password" autocomplete="current-password" required>
+      </label>
+      <p class="login-err" id="login-err" role="alert"></p>
+      <button class="btn btn-primary" type="submit">Zaloguj</button>
+      <a class="login-back" href="index.html">← Wróć na stronę</a>
+    </form>
+  </main>
+
+  <!-- app -->
+  <div id="app" class="app" hidden>
+    <aside class="side">
+      <a class="side-brand" href="index.html" target="_blank" rel="noopener">
+        <img src="assets/logo/logo.webp" alt="">
+        <span>HORIN<small>panel</small></span>
+      </a>
+      <nav class="side-nav" id="nav">
+        <a href="#pulpit" data-tab="pulpit">Pulpit</a>
+        <a href="#zdjecia" data-tab="zdjecia">Zdjęcia</a>
+        <a href="#teksty" data-tab="teksty">Teksty</a>
+        <a href="#zgloszenia" data-tab="zgloszenia">Zgłoszenia <span class="badge" id="badge-msg" hidden></span></a>
+        <a href="#statystyki" data-tab="statystyki">Statystyki</a>
+        <a href="#ustawienia" data-tab="ustawienia">Ustawienia</a>
+      </nav>
+      <div class="side-foot">
+        <span id="who"></span>
+        <button class="link" id="logout" type="button">Wyloguj</button>
+      </div>
+    </aside>
+
+    <main class="main" id="main"></main>
+
+    <!-- live preview of the public page (Zdjęcia / Teksty) -->
+    <aside class="preview" id="preview" hidden>
+      <div class="pv-bar">
+        <span class="pv-title">Podgląd na żywo</span>
+        <div class="seg" id="pv-device">
+          <button type="button" data-device="desktop" class="is-on">Komputer</button>
+          <button type="button" data-device="mobile">Telefon</button>
+        </div>
+        <button class="link" id="pv-reload" type="button">Odśwież</button>
+      </div>
+      <div class="pv-stage" id="pv-stage">
+        <div class="pv-frame" id="pv-frame"><iframe id="pv-iframe" title="Podgląd strony"></iframe></div>
+      </div>
+      <p class="pv-note">Podgląd pokazuje miejsce na stronie, w którym stoi edytowany tekst lub zdjęcia. Niezapisane teksty widać tylko tutaj.</p>
+    </aside>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="assets/js/dict.js"></script>
+  <script src="assets/vendor/supabase.js"></script>
+  <script type="module" src="assets/js/admin.js"></script>
+</body>
+</html>

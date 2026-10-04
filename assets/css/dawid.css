@@ -1,0 +1,237 @@
+/* ============================================================
+   HORIN — TWÓJ, DAWID / LETNIE BRZMIENIA
+   stage-costume page: dark house, violet stage light.
+   Layout rules only — the scene itself is assets/js/dawid.js
+   ============================================================ */
+
+.dw-page {
+  --violet: #8a2bff;
+  --strip: 17vh; /* visible part of the photo strip at the bottom edge */
+  background: #07050d;
+  color: var(--paper);
+}
+
+/* house darkness + a breathing violet glow behind the stage */
+#dw-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 70% 52% at 50% 36%, rgba(122, 43, 255, 0.34) 0%, rgba(90, 30, 200, 0.12) 46%, transparent 72%),
+    linear-gradient(180deg, #0d0817 0%, #07050d 55%, #030208 100%);
+}
+#dw-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 46% 34% at 50% 34%, rgba(214, 59, 255, 0.22), transparent 70%);
+  animation: dw-breathe 5.5s ease-in-out infinite alternate;
+}
+@keyframes dw-breathe {
+  from { opacity: 0.25; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1.06); }
+}
+
+/* darkens the text side while a scene is in focus (opacity from JS) */
+#dw-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, rgba(5, 3, 10, 0) 34%, rgba(5, 3, 10, 0.78) 62%, rgba(5, 3, 10, 0.9) 100%);
+  will-change: opacity;
+}
+
+.dw-page #preloader { background: #07050d; }
+.dw-page .pl-ghost,
+.dw-page .pl-fill { background: var(--paper); }
+.dw-page .pl-count { color: var(--paper); }
+.dw-page ::selection { background: var(--violet); color: #fff; }
+
+.dw-page .h-brand .h-nav + .h-nav { margin-top: 4px; }
+
+/* ---------- hero: title sits right above the photo strip ---------- */
+
+.dw-hero {
+  justify-content: flex-end;
+  padding: 0 var(--pad) calc(var(--strip) + clamp(14px, 3vh, 34px));
+}
+.dw-hero h1 {
+  max-width: none;
+  font-size: clamp(30px, 6.4vw, 104px);
+  line-height: 0.95;
+  text-shadow: 0 4px 44px rgba(138, 43, 255, 0.55);
+}
+.dw-kicker {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 1.5em;
+}
+.dw-hero .scroll-hint { bottom: calc(var(--strip) + clamp(14px, 3vh, 34px)); }
+
+/* ---------- scenes: photos left, text right ---------- */
+
+.dw-chapter { justify-content: flex-end; }
+.dw-chapter .ch-inner {
+  width: 43vw;
+  max-width: 640px;
+  margin: 0 clamp(0px, 2.5vw, 48px) 0 0;
+}
+.dw-chapter .ch-vertical { font-size: clamp(34px, 6.2vmin, 72px); }
+.dw-chapter .ch-title { font-size: clamp(26px, 4.6vmin, 54px); }
+.dw-chapter .ch-kicker { color: #c9a6ff; opacity: 0.95; }
+.dw-chapter .ch-text { max-width: 46ch; }
+.dw-num { margin-left: 0.5em; opacity: 0.75; }
+
+.dw-page .outro .o-link { text-shadow: 0 6px 60px rgba(138, 43, 255, 0.7); }
+
+/* ---------- portrait: photos on top, text below ---------- */
+
+@media (max-aspect-ratio: 9/10) {
+  .dw-page { --strip: 12.5vh; }
+
+  #dw-scrim {
+    background: linear-gradient(180deg, rgba(5, 3, 10, 0) 36%, rgba(5, 3, 10, 0.82) 54%, rgba(5, 3, 10, 0.94) 100%);
+  }
+
+  .dw-hero h1 { font-size: clamp(26px, 8.6vw, 60px); }
+  .dw-kicker { font-size: 9px; letter-spacing: 0.26em; margin-bottom: 1.2em; }
+
+  .dw-chapter {
+    align-items: flex-start;
+    justify-content: flex-start;
+    /* below the photo pair (top block ends ~46vh — see slot() in dawid.js) */
+    padding-top: 49vh;
+  }
+  .dw-chapter .ch-inner {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dw-chapter .ch-vertical {
+    writing-mode: horizontal-tb;
+    transform: translateY(calc(var(--chOff) * -1px));
+    font-size: clamp(24px, 7.4vw, 40px);
+    line-height: 0.9;
+  }
+  .dw-chapter .ch-kicker { margin-bottom: 0.9em; }
+  .dw-chapter .ch-title { font-size: clamp(18px, 5.4vw, 30px); margin-bottom: 0.5em; }
+  .dw-chapter .ch-text { font-size: 12px; line-height: 1.6; }
+  .dw-chapter .ch-clip { max-height: 24vh; }
+}
+
+/* ---------- Spotify player (right edge) ---------- */
+
+.dw-player {
+  position: fixed;
+  right: var(--pad);
+  bottom: 64px;
+  z-index: 44;
+  width: 340px;
+  max-width: calc(100vw - 2 * var(--pad));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  transform: translateX(calc(100% + var(--pad) + 20px));
+  transition: transform 0.9s var(--ease-out), opacity 0.4s;
+}
+.dw-player.is-in { transform: none; }
+body.is-locked .dw-player { opacity: 0; pointer-events: none; }
+
+.dwp-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 10px 13px;
+  border: 0;
+  border-radius: 100px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(105deg, #4b14e6 0%, #8a2bff 45%, #d63bff 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22), 0 6px 26px rgba(124, 44, 255, 0.6);
+  transition: transform 0.4s var(--ease-out);
+}
+.dwp-tab:hover { transform: scale(1.05); }
+
+/* equaliser bars */
+.dwp-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+/* bars move only while the music is actually playing */
+.dwp-eq i { width: 2px; height: 100%; background: #fff; border-radius: 1px; transform-origin: bottom; transform: scaleY(0.35); }
+.dw-player.is-playing .dwp-eq i { animation: dwp-eq 1s ease-in-out infinite; }
+.dwp-eq i:nth-child(2) { animation-delay: -0.35s; }
+.dwp-eq i:nth-child(3) { animation-delay: -0.7s; }
+.dwp-eq i:nth-child(4) { animation-delay: -0.2s; }
+@keyframes dwp-eq {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+/* + turns into × when the player is open */
+.dwp-x { position: relative; width: 9px; height: 9px; margin-left: 2px; transition: transform 0.4s var(--ease-out); }
+.dwp-x::before, .dwp-x::after { content: ''; position: absolute; left: 0; right: 0; top: 4px; height: 1.5px; background: #fff; }
+.dwp-x::after { transform: rotate(90deg); }
+.dw-player.is-open .dwp-x { transform: rotate(45deg); }
+
+.dwp-body {
+  width: 100%;
+  height: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  opacity: 0;
+  box-shadow: 0 18px 60px rgba(60, 10, 140, 0.65), 0 0 0 1px rgba(170, 110, 255, 0.35);
+  transition: height 0.6s var(--ease-out), opacity 0.4s;
+}
+.dw-player.is-open .dwp-body { height: 152px; opacity: 1; }
+.dwp-body iframe { display: block; width: 100%; height: 152px; border: 0; }
+
+/* the scroll hint used to stand in this corner */
+.dw-hero .scroll-hint { display: none; }
+
+@media (max-aspect-ratio: 9/10), (max-width: 820px) {
+  .dw-player { bottom: 54px; }
+  .dwp-tab { font-size: 9px; padding: 9px 13px 9px 11px; }
+  .dw-player:not(.is-open) .dwp-label { display: none; }
+}
+
+/* ---------- finale: inside the round LED screen (opacity from JS) ---------- */
+
+#dw-portal,
+#dw-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity;
+}
+/* the room behind the screen: dark, with the circle still glowing in it */
+#dw-portal {
+  --grow: 1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(138, 43, 255, 0.5) 0%, rgba(96, 30, 210, 0.22) calc(26% * var(--grow)), rgba(7, 5, 13, 0) calc(58% * var(--grow))),
+    #07050d;
+}
+#dw-portal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(214, 59, 255, 0.28), transparent 46%);
+  animation: dw-breathe 5.5s ease-in-out infinite alternate;
+}
+/* the moment of passing through the screen */
+#dw-flash {
+  z-index: 7;
+  background: radial-gradient(circle at 50% 50%, #e6d2ff 0%, #b98cff 38%, #8a2bff 100%);
+}

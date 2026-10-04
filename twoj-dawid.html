@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twój, Dawid — HORIN</title>
+  <meta name="description" content="TWÓJ, DAWID — LETNIE BRZMIENIA. A stage costume designed by HORIN: a navy uniform silhouette, a cape lined in yellow and long tails built for movement and light.">
+  <link rel="canonical" href="https://horin.pl/twoj-dawid.html">
+  <meta name="theme-color" content="#07050d">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HORIN">
+  <meta property="og:title" content="Twój, Dawid — Letnie Brzmienia · HORIN">
+  <meta property="og:description" content="A stage costume designed by HORIN: a navy uniform silhouette, a cape lined in yellow and long tails built for movement and light.">
+  <meta property="og:url" content="https://horin.pl/twoj-dawid.html">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="pl_PL">
+  <meta property="og:image" content="https://horin.pl/assets/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Twój, Dawid — Letnie Brzmienia · HORIN">
+  <meta name="twitter:image" content="https://horin.pl/assets/og.jpg">
+  <link rel="icon" type="image/png" href="assets/logo/favicon.png">
+  <link rel="preload" href="assets/fonts/Benzin-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/Benzin-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/dawid.css">
+  <script type="importmap">
+    { "imports": { "three": "./assets/vendor/three.module.min.js" } }
+  </script>
+</head>
+<body class="is-locked dw-page" data-page="dawid">
+
+  <div id="dw-bg"></div>
+  <canvas id="scene"></canvas>
+  <div id="dw-scrim"></div>
+  <div id="dw-portal"></div>
+  <div id="dw-flash"></div>
+
+  <!-- preloader -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-logo">
+      <div class="pl-layer pl-ghost"></div>
+      <div class="pl-layer pl-fill-wrap"><div class="pl-fill"></div></div>
+    </div>
+    <div class="pl-count">000 %</div>
+  </div>
+
+  <!-- header -->
+  <header class="site-header is-inverse">
+    <div class="h-project">
+      <span data-i18n="dw.hdr">Twój, Dawid</span>
+      <small data-i18n="dw.hdr.sub">Stage costume</small>
+    </div>
+    <a class="h-logo" href="index.html" aria-label="HORIN home">
+      <img src="assets/logo/logo.webp" alt="HORIN logo">
+    </a>
+    <div class="h-brand">
+      HORIN
+      <a class="h-nav" href="index.html" data-i18n="nav.collection">Collection</a>
+      <a class="h-nav" href="contact.html" data-i18n="nav.contact">Contact</a>
+    </div>
+  </header>
+
+  <!-- language switch -->
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button type="button" class="ls-btn is-on" data-lang="en">EN</button>
+    <span class="ls-sep">/</span>
+    <button type="button" class="ls-btn" data-lang="pl">PL</button>
+  </div>
+
+  <!-- hero: the stage in the middle, title below, photos peeking from the bottom edge -->
+  <section class="hero dw-hero">
+    <div class="dw-kicker" data-i18n="dw.kicker">Stage costume — designed by HORIN</div>
+    <h1 data-i18n="dw.title">Twój, Dawid<br>Letnie Brzmienia</h1>
+    <div class="scroll-hint" data-i18n="dw.hint">Scroll to enter the stage</div>
+  </section>
+
+  <!-- scenes: two concert photos + a short text each (used: one per photo pair) -->
+  <section class="chapter dw-chapter" aria-label="Scene 1">
+    <div class="ch-inner">
+      <div class="ch-vertical" data-i18n="dw.s1.vertical">Cape</div>
+      <div class="ch-body">
+        <div class="ch-kicker"><span data-i18n="dw.scene">Scene</span> <span class="dw-num">01</span></div>
+        <h2 class="ch-title" data-i18n="dw.s1.title">The cape in motion</h2>
+        <div class="ch-clip">
+          <div class="ch-text" data-i18n="dw.s1.text">
+            <p>The costume opens with a long cape with a contrasting yellow lining. At rest it remains almost invisible, merging with the navy of the silhouette; only the artist&rsquo;s movement reveals its interior and turns the fabric into a part of the stage design.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter dw-chapter" aria-label="Scene 2">
+    <div class="ch-inner">
+      <div class="ch-vertical" data-i18n="dw.s2.vertical">Uniform</div>
+      <div class="ch-body">
+        <div class="ch-kicker"><span data-i18n="dw.scene">Scene</span> <span class="dw-num">02</span></div>
+        <h2 class="ch-title" data-i18n="dw.s2.title">Uniform construction</h2>
+        <div class="ch-clip">
+          <div class="ch-text" data-i18n="dw.s2.text">
+            <p>The starting point is the form of a dress uniform: a stand collar, two rows of buttons and a clearly defined shoulder line. The classic order has been preserved, yet rescaled for the stage, so that the silhouette remains legible from a great distance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter dw-chapter" aria-label="Scene 3">
+    <div class="ch-inner">
+      <div class="ch-vertical" data-i18n="dw.s3.vertical">Contrast</div>
+      <div class="ch-body">
+        <div class="ch-kicker"><span data-i18n="dw.scene">Scene</span> <span class="dw-num">03</span></div>
+        <h2 class="ch-title" data-i18n="dw.s3.title">Navy and yellow</h2>
+        <div class="ch-clip">
+          <div class="ch-text" data-i18n="dw.s3.text">
+            <p>The palette is built on two colours. Deep navy gives the silhouette weight and calm, while yellow appears only where the costume opens: in the lining, on the shoulders and in the side stripes. Colour becomes a signal of movement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter dw-chapter" aria-label="Scene 4">
+    <div class="ch-inner">
+      <div class="ch-vertical" data-i18n="dw.s4.vertical">Tails</div>
+      <div class="ch-body">
+        <div class="ch-kicker"><span data-i18n="dw.scene">Scene</span> <span class="dw-num">04</span></div>
+        <h2 class="ch-title" data-i18n="dw.s4.title">Elongated line</h2>
+        <div class="ch-clip">
+          <div class="ch-text" data-i18n="dw.s4.text">
+            <p>The back of the jacket extends into long tails that reference the tailcoat. They lengthen the silhouette and respond to every step, and in sharp stage light they draw a clear, graphic contour.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter dw-chapter" aria-label="Scene 5">
+    <div class="ch-inner">
+      <div class="ch-vertical" data-i18n="dw.s5.vertical">Stripe</div>
+      <div class="ch-body">
+        <div class="ch-kicker"><span data-i18n="dw.scene">Scene</span> <span class="dw-num">05</span></div>
+        <h2 class="ch-title" data-i18n="dw.s5.title">The side line</h2>
+        <div class="ch-clip">
+          <div class="ch-text" data-i18n="dw.s5.text">
+            <p>Wide side stripes lead the eye along the entire leg. Borrowed from the uniform, they organise the proportions of the silhouette and remain visible even when the artist turns away from the audience.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter dw-chapter" aria-label="Scene 6">
+    <div class="ch-inner">
+      <div class="ch-vertical" data-i18n="dw.s6.vertical">Reveal</div>
+      <div class="ch-body">
+        <div class="ch-kicker"><span data-i18n="dw.scene">Scene</span> <span class="dw-num">06</span></div>
+        <h2 class="ch-title" data-i18n="dw.s6.title">Second act</h2>
+        <div class="ch-clip">
+          <div class="ch-text" data-i18n="dw.s6.text">
+            <p>Once the jacket comes off, the costume changes its character. A fitted top with geometric yellow panels repeats the colours of the first silhouette in a lighter, more athletic form, leaving the artist complete freedom of movement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter dw-chapter" aria-label="Scene 7">
+    <div class="ch-inner">
+      <div class="ch-vertical" data-i18n="dw.s7.vertical">Light</div>
+      <div class="ch-body">
+        <div class="ch-kicker"><span data-i18n="dw.scene">Scene</span> <span class="dw-num">07</span></div>
+        <h2 class="ch-title" data-i18n="dw.s7.title">Costume in light</h2>
+        <div class="ch-clip">
+          <div class="ch-text" data-i18n="dw.s7.text">
+            <p>The design was created with an open-air concert in mind: rain, smoke and constantly changing light. Navy absorbs the colours of the spotlights and the yellow elements reflect them, keeping the silhouette legible in every scene.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter dw-chapter" aria-label="Scene 8">
+    <div class="ch-inner">
+      <div class="ch-vertical" data-i18n="dw.s8.vertical"></div>
+      <div class="ch-body">
+        <div class="ch-kicker"><span data-i18n="dw.scene">Scene</span> <span class="dw-num">08</span></div>
+        <h2 class="ch-title" data-i18n="dw.s8.title"></h2>
+        <div class="ch-clip">
+          <div class="ch-text" data-i18n="dw.s8.text"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- outro -->
+  <section class="outro">
+    <div class="o-kicker" data-i18n="dw.outro.kicker">Every stage needs its own silhouette — write to the atelier</div>
+    <a class="o-link" href="contact.html" data-i18n="outro.link">Contact</a>
+    <div class="o-foot">
+      <span data-i18n="dw.outro.brand">HORIN — Twój, Dawid</span>
+      <span>© 2026</span>
+    </div>
+  </section>
+
+  <!-- Spotify player: tab on the right edge, iframe is created on open (dawid.js) -->
+  <aside class="dw-player" id="dw-player" hidden>
+    <button class="dwp-tab" type="button" aria-expanded="false" aria-controls="dwp-body">
+      <span class="dwp-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="dwp-label">Twój, Dawid — Spotify</span>
+      <span class="dwp-x" aria-hidden="true"></span>
+    </button>
+    <div class="dwp-body" id="dwp-body"></div>
+  </aside>
+
+  <!-- lightbox -->
+  <div id="lightbox" aria-hidden="true">
+    <div class="lb-num"></div>
+    <div class="lb-close" data-i18n="lb.close">Close</div>
+    <img alt="HORIN — Twój, Dawid stage costume">
+  </div>
+
+  <div id="scroll-space"></div>
+
+  <script src="assets/js/dict.js" defer></script>
+  <script src="assets/js/i18n.js" defer></script>
+  <script type="module" src="assets/js/dawid.js"></script>
+</body>
+</html>
